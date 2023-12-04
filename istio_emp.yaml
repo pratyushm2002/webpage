@@ -1,0 +1,29 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: emp-virtualservice
+spec:
+  hosts:
+  - "myemp.org"
+  gateways:
+  - myemp-gateway
+  http:
+  - route:
+    - destination:
+        host: employee-service.default.svc.cluster.local
+        port:
+          number: 8080
+    match:
+    - uri:
+        prefix: / 
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: emp-destinationrule
+spec:
+  host: employee-service.default.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL

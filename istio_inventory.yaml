@@ -1,0 +1,29 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: inventory-virtualservice
+spec:
+  hosts:
+  - "myemp.org"
+  gateways:
+  - myemp-gateway
+  http:
+  - route:
+    - destination:
+        host: inventory-service.default.svc.cluster.local
+        port:
+          number: 80
+    match:
+    - uri:
+        prefix: /inventory
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: inventory-destinationrule
+spec:
+  host: inventory-service.default.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL

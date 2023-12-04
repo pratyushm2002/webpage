@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employee-webapp
+  labels:
+    app: myapp
+
+spec:
+  template:
+    metadata:
+      name: employee-pod
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: emp
+          image: myemp:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: employee-data
+              mountPath: /app
+      volumes:
+        - name: employee-data
+          hostPath:
+            path: /var/data
+
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: employee-service
+
+spec:
+  type: NodePort
+  ports:
+    - targetPort: 8080
+      protocol: TCP
+      port: 8080
+      nodePort: 32567
+  selector:
+    app: myapp
+    
